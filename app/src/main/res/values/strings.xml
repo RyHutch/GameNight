@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">GameNight</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dice">Dice</string>
+    <string name="timer">Timer</string>
+    <string name="title_activity_dice">DiceActivity</string>
+    <string name="roll">Roll!</string>
+    <string name="roll_dice">Roll Dice</string>
+    <string name="create_dice">Create Dice</string>
+    <string name="faces">Faces</string>
+    <string name="value">Value</string>
+    <string name="remove">remove</string>
+    <string name="reroll">reroll</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="number_of_faces">Number of Faces</string>
+    <string name="number_of_die">Number of Die</string>
+</resources>

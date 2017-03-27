@@ -1,0 +1,32 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.ryan.gamenight.fragment.DiceSelectFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:id="@+id/diceImage"
+            android:layout_width="256dp"
+            android:layout_height="256dp"
+            android:src="@drawable/ic_dice_select"
+            android:background="#00000000"
+            android:scaleType="fitXY"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="116dp" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dice"
+            android:textSize="50sp"
+            android:layout_below="@+id/diceImage"
+            android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+</FrameLayout>
