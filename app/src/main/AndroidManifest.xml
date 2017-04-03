@@ -24,6 +24,11 @@
             android:name=".DiceActivity"
             android:label="@string/title_activity_dice"
             android:theme="@style/AppTheme"/>
+
+        <activity
+            android:name=".TimerActivity"
+            android:label="@string/title_activity_timer"
+            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>

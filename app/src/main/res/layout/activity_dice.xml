@@ -3,14 +3,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <RadioGroup
+        android:id="@+id/dice_rg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/dice_rb_sum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="32sp"
+            android:text="@string/sum"/>
+
+        <RadioButton
+            android:id="@+id/dice_rb_high"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="32sp"
+            android:text="@string/highest"/>
+
+        <RadioButton
+            android:id="@+id/dice_rb_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="32sp"
+            android:text="@string/mode"/>
+
+
+    </RadioGroup>
+
     <TextView
         android:id="@+id/dice_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="128sp"
         android:text="@string/roll"
-        android:layout_marginTop="64dp"
-        android:layout_alignParentTop="true"
+        android:layout_marginTop="25dp"
+        android:layout_below="@+id/dice_rg"
         android:layout_centerHorizontal="true" />
 
     <ListView

@@ -4,10 +4,13 @@ import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
+import android.util.SparseIntArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.example.ryan.gamenight.adapter.DiceListViewAdapter;
@@ -36,15 +39,13 @@ public class DiceActivity extends AppCompatActivity {
     // The TextView that displays the sum of the dice rolled
     private TextView diceTv;
 
+    // The ID of the currently checked radio button
+    private int selectedRb;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        // TODO: make dynamic dice
-        dice.add(new Die(6));
-        dice.add(new Die(6));
-        dice.add(new Die(6));
-        dice.add(new Die(6));
-        dice.add(new Die(6));
+        // Start with 2 d6
         dice.add(new Die(6));
         dice.add(new Die(6));
 
@@ -77,6 +78,7 @@ public class DiceActivity extends AppCompatActivity {
                     public void onClickCancel() {
                         // Do nothing
                     }
+
                     @Override
                     public void onClickCreate(int dice, int faces) {
                         createDice(dice, faces);
@@ -85,6 +87,17 @@ public class DiceActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
+
+        // Set the Dice Radio Group listener
+        RadioGroup rgDice = (RadioGroup) findViewById(R.id.dice_rg);
+        rgDice.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                selectedRb = checkedId;
+                updateDiceTv();
+            }
+        });
+
 
         // Initialize the TextView with the dice info
         diceTv = (TextView) findViewById(R.id.dice_tv);
@@ -113,7 +126,7 @@ public class DiceActivity extends AppCompatActivity {
     }
 
     private void rollDice() {
-        for (Die d : this.dice){
+        for (Die d : this.dice) {
             d.roll();
         }
         diceListViewAdapter.notifyDataSetChanged();
@@ -121,15 +134,87 @@ public class DiceActivity extends AppCompatActivity {
     }
 
     public void updateDiceTv() {
-        int sum = 0;
-        for (Die d : this.dice){
-            sum += d.getCurrentFaceUp();
+
+        switch (selectedRb) {
+
+            // Sum the dice
+            case R.id.dice_rb_sum:
+                int sum = 0;
+                for (Die d : this.dice) {
+                    sum += d.getCurrentFaceUp();
+                }
+                diceTv.setText(String.format("%d", sum));
+                break;
+
+            // Find the highest die
+            case R.id.dice_rb_high:
+                int high = 0;
+                for (Die d : this.dice) {
+                    if (d.getCurrentFaceUp() > high) {
+                        high = d.getCurrentFaceUp();
+                    }
+                }
+                diceTv.setText(String.format("%d", high));
+                break;
+
+            // Find the face with the most occurrences
+            case R.id.dice_rb_mode:
+                SparseIntArray counts = new SparseIntArray();
+                for (Die d : this.dice) {
+                    // Check if the mapping exists
+                    if (counts.get(d.getCurrentFaceUp()) == 0) {
+                        // If not, add the mapping
+                        counts.put(d.getCurrentFaceUp(), 1);
+                    } else {
+                        // If so, add to the current count
+                        counts.put(d.getCurrentFaceUp(), (counts.get(d.getCurrentFaceUp()) + 1));
+                    }
+                }
+
+                // Find the max die
+                int max = 0;
+                for (Die d : this.dice) {
+                    if (d.getCurrentFaceUp() > max) {
+                        max = d.getCurrentFaceUp();
+                    }
+                }
+
+                // Check for the most occurrences of a face
+                int occurrences = 0;
+                for (int i = 0; i <= max; i++) {
+                    if (counts.get(i) > occurrences) {
+                        occurrences = counts.get(i);
+                    }
+                }
+
+                // Add all faces with the most occurrences to the mostCommon list
+                ArrayList<Integer> mostCommon = new ArrayList<>();
+                for (int i = 0; i <= max; i++) {
+                    if (counts.get(i) == occurrences) {
+                        mostCommon.add(i);
+                    }
+                }
+
+                // Display all the faces with the most occurrences
+                String s = "";
+                for (int j = 0; j < mostCommon.size(); j++) {
+                    if (j == mostCommon.size() - 1){
+                        s += mostCommon.get(j);
+                    } else {
+                        s += mostCommon.get(j) + ", ";
+                    }
+                }
+                diceTv.setText(String.format("%s", s));
+                break;
+
+            // Currently Unused
+            default:
+                break;
         }
-        diceTv.setText(String.format("%d", sum));
     }
 
-    public void createDice(int dice, int faces){
-        for (int i = 0; i < dice; i++){
+    public void createDice(int dice, int faces) {
+        for (int i = 0; i < dice; i++) {
             this.dice.add(new Die(faces));
         }
         diceListViewAdapter.notifyDataSetChanged();
@@ -140,7 +225,7 @@ public class DiceActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         // Add the following line to register the Session Manager Listener onResume
-        mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(mShakeDetector, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override

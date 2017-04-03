@@ -4,16 +4,15 @@
 // ListView: Complete       //
 // ViewPager: Complete      //
 // Animation:               //
-// Gesture:                 //
-// Custom Dialog:           //
+// Gesture: -- Complete --  //
+// Custom Dialog: Complete  //
 // Interface: Complete      //
 // Broadcast:               //
 // Service:                 //
-// RadioGroup:              //
+// RadioGroup: Complete     //
 // Handler:                 //
 // Bundle:                  //
 //////////////////////////////
-
 
 package com.example.ryan.gamenight;
 
