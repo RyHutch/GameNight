@@ -7,11 +7,11 @@
 // Gesture: -- Complete --  //
 // Custom Dialog: Complete  //
 // Interface: Complete      //
-// Broadcast:               //
-// Service:                 //
+// Broadcast: Complete      //
+// Service: Complete        //
 // RadioGroup: Complete     //
 // Handler: Complete        //
-// Bundle:                  //
+// Bundle: Complete         //
 //////////////////////////////
 
 package com.example.ryan.gamenight;

@@ -1,11 +1,17 @@
 package com.example.ryan.gamenight;
 
 import android.animation.ObjectAnimator;
+import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
@@ -14,7 +20,11 @@ import android.widget.NumberPicker;
 
 public class TimerActivity extends AppCompatActivity {
 
-    private Button btStart;
+    private static final String TAG = "TimerActivity";
+
+    static final public String UI_UPDATE = "com.example.ryan.gamenight.UI_UPDATE";
+
+    private Button btControl;
     private Button btReset;
 
     private NumberPicker npHours;
@@ -23,16 +33,31 @@ public class TimerActivity extends AppCompatActivity {
 
     private ImageButton ibHourglass;
 
-    private int hours;
-    private int minutes;
-    private int seconds;
-
     ObjectAnimator animation;
+
+    BroadcastReceiver broadcastReceiver;
+
+    Context context;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
+        context = this;
+
+        // Setup the broadcast listener
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // TODO: update ui with broadcast data
+                Bundle uiData = intent.getExtras();
+                int s = uiData.getInt("seconds");
+                int m = uiData.getInt("minutes");
+                int h = uiData.getInt("hours");
+                Log.d(TAG, String.valueOf(h) + ":" + String.valueOf(m) + ":" + String.valueOf(s));
+                updateUi(s, m, h);
+            }
+        };
 
         // Get the number pickers
         npHours = (NumberPicker)findViewById(R.id.timer_np_hours);
@@ -48,18 +73,50 @@ public class TimerActivity extends AppCompatActivity {
         npMinutes.setMaxValue(59);
         npSeconds.setMaxValue(59);
 
-        // Get the image button and start button
+        // Get views for every button
         // TODO: Finish implementation - alert/notification
         ibHourglass = (ImageButton)findViewById(R.id.timer_ib_hourglass);
-        btStart = (Button)findViewById(R.id.timer_bt_start);
-
-        // Set the startTimer listener for image button and start button
-        ibHourglass.setOnClickListener(startTimer);
-        btStart.setOnClickListener(startTimer);
-
-        // Get the reset button and disable it
+        btControl = (Button)findViewById(R.id.timer_bt_start);
         btReset = (Button)findViewById(R.id.timer_bt_reset);
-        btReset.setOnClickListener(resetTimer);
+
+        // Setup the animation
+        animation = ObjectAnimator.ofFloat(ibHourglass, "rotation", 0f, 180f);
+        animation.setDuration(2000);
+        animation.setRepeatCount(ObjectAnimator.INFINITE);
+        animation.setInterpolator(new AccelerateDecelerateInterpolator());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Activate the broadcast manager
+        LocalBroadcastManager.getInstance(this).registerReceiver((broadcastReceiver), new IntentFilter(UI_UPDATE));
+
+        // TODO: Check if the service is running
+        // If the timer is running, start in the appropriate state
+        if (isTimerRunning(TimerService.class)) {
+
+            // Put the ui into the stop state
+            stopUiState();
+        } else {
+
+            // Put the ui into the start state
+            startUiState();
+
+            // Enable the Number Pickers
+            npHours.setEnabled(true);
+            npMinutes.setEnabled(true);
+            npSeconds.setEnabled(true);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+
+        // Free the broadcast manager
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+        super.onStop();
     }
 
     // OnClickListener to start the timer
@@ -68,34 +125,23 @@ public class TimerActivity extends AppCompatActivity {
         public void onClick(View v) {
 
             // Get the values on the Number Pickers
-            hours = npHours.getValue();
-            minutes = npMinutes.getValue();
-            seconds = npSeconds.getValue();
+            int hours = npHours.getValue();
+            int minutes = npMinutes.getValue();
+            int seconds = npSeconds.getValue();
 
-            // Disable the Number Pickers
-            npHours.setEnabled(false);
-            npMinutes.setEnabled(false);
-            npSeconds.setEnabled(false);
+            // Set ui to stop state
+            stopUiState();
 
-            // Disable the reset button
-            btReset.setEnabled(false);
+            // Create a bundle with relevant data
+            Bundle timerServiceBundle = new Bundle();
+            timerServiceBundle.putInt("hours", hours);
+            timerServiceBundle.putInt("minutes", minutes);
+            timerServiceBundle.putInt("seconds", seconds);
 
-            // Start the rotation animation
-            startRotation();
-
-            // Change the start button to a stop button
-            btStart.setText(R.string.stop);
-            btStart.setOnClickListener(stopTimer);
-
-            // Change the hourglass to a stop button
-            ibHourglass.setOnClickListener(stopTimer);
-
-            // Start a new thread, if no time is left don't delay the call
-            if (hours == 0 && minutes == 0 && seconds == 0){
-                handler.post(runnable);
-            } else {
-                handler.postDelayed(runnable, 1000);
-            }
+            // Start the timer service with bundled data
+            Intent timerServiceIntent = new Intent(context, TimerService.class);
+            timerServiceIntent.putExtras(timerServiceBundle);
+            context.startService(timerServiceIntent);
         }
     };
 
@@ -104,20 +150,13 @@ public class TimerActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            stopRotation();
+            // Set ui to start state
+            startUiState();
 
-            // Change the stop button to a start button
-            btStart.setText(R.string.start);
-            btStart.setOnClickListener(startTimer);
+            // TODO: tell the service to hault
+            Intent stopTimerService = new Intent(context, TimerService.class);
+            stopService(stopTimerService);
 
-            // Change the hourglass to a start button
-            ibHourglass.setOnClickListener(startTimer);
-
-            // Enable the reset button
-            btReset.setEnabled(true);
-
-            // Pause the thread
-            handler.removeCallbacks(runnable);
         }
     };
 
@@ -138,48 +177,74 @@ public class TimerActivity extends AppCompatActivity {
         }
     };
 
-    // Create the thread to handle the timer countdown
-    Handler handler = new Handler();
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            if(seconds > 0){
-                seconds--;
-                npSeconds.setValue(seconds);
-                handler.postDelayed(this, 1000);
-            } else if (minutes > 0) {
-                minutes--;
-                seconds = 59;
-                npMinutes.setValue(minutes);
-                npSeconds.setValue(seconds);
-                handler.postDelayed(this, 1000);
-            } else if (hours > 0) {
-                hours--;
-                minutes = 59;
-                seconds = 59;
-                npHours.setValue(hours);
-                npMinutes.setValue(minutes);
-                npSeconds.setValue(seconds);
-                handler.postDelayed(this, 1000);
-            } else {
-                // When the timer is finished, click the start and reset button
-                btStart.callOnClick();
-                btReset.callOnClick();
-            }
+    // Set the ui to the start state (i.e. timer is paused)
+    private void startUiState(){
+
+        // Set control button state
+        btControl.setText(R.string.start);
+        btControl.setOnClickListener(startTimer);
+
+        // Set reset button state
+        btReset.setOnClickListener(resetTimer);
+        btReset.setEnabled(true);
+
+        // Set hourglass
+        ibHourglass.setOnClickListener(startTimer);
+        stopRotation();
+    }
+
+    // Set the ui to the stop state (i.e. timer is running)
+    private void stopUiState(){
+
+        // Set control button state
+        btControl.setText(R.string.stop);
+        btControl.setOnClickListener(stopTimer);
+
+        // Set reset button state
+        btReset.setOnClickListener(resetTimer);
+        btReset.setEnabled(false);
+
+        // Set hourglass
+        ibHourglass.setOnClickListener(stopTimer);
+        startRotation();
+
+        // Disable the Number Pickers
+        npHours.setEnabled(false);
+        npMinutes.setEnabled(false);
+        npSeconds.setEnabled(false);
+    }
+
+    // Update the ui
+    private void updateUi(int seconds, int minutes, int hours){
+        npHours.setValue(hours);
+        npMinutes.setValue(minutes);
+        npSeconds.setValue(seconds);
+
+        // When the timer hits zero, set ui to start state and reset number pickers
+        if (seconds == 0 && minutes == 0 && hours == 0) {
+            startUiState();
+            btReset.callOnClick();
         }
-    };
+    }
 
     // Start the image button rotation
-    public void startRotation(){
-        animation = ObjectAnimator.ofFloat(ibHourglass, "rotation", 0f, 180f);
-        animation.setDuration(2000);
-        animation.setRepeatCount(ObjectAnimator.INFINITE);
-        animation.setInterpolator(new AccelerateDecelerateInterpolator());
+    private void startRotation(){
         animation.start();
     }
 
     // Stop the image button rotation
-    public void stopRotation(){
+    private void stopRotation(){
         animation.end();
+    }
+
+    // Check if the timer service is running
+    private boolean isTimerRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
