@@ -49,7 +49,6 @@ public class TimerActivity extends AppCompatActivity {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                // TODO: update ui with broadcast data
                 Bundle uiData = intent.getExtras();
                 int s = uiData.getInt("seconds");
                 int m = uiData.getInt("minutes");
@@ -93,7 +92,6 @@ public class TimerActivity extends AppCompatActivity {
         // Activate the broadcast manager
         LocalBroadcastManager.getInstance(this).registerReceiver((broadcastReceiver), new IntentFilter(UI_UPDATE));
 
-        // TODO: Check if the service is running
         // If the timer is running, start in the appropriate state
         if (isTimerRunning(TimerService.class)) {
 
@@ -104,10 +102,8 @@ public class TimerActivity extends AppCompatActivity {
             // Put the ui into the start state
             startUiState();
 
-            // Enable the Number Pickers
-            npHours.setEnabled(true);
-            npMinutes.setEnabled(true);
-            npSeconds.setEnabled(true);
+            // Set number pickers to the restarted state
+            btReset.callOnClick();
         }
     }
 
@@ -153,7 +149,7 @@ public class TimerActivity extends AppCompatActivity {
             // Set ui to start state
             startUiState();
 
-            // TODO: tell the service to hault
+            // Stop the service
             Intent stopTimerService = new Intent(context, TimerService.class);
             stopService(stopTimerService);
 
