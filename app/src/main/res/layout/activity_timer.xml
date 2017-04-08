@@ -62,13 +62,45 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/timer_bt_start"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:textSize="25sp"
-        android:text="Start"
-        android:gravity="center"
-        android:layout_gravity="center"/>
+        android:layout_height="64dp">
 
+        <Button
+            android:id="@+id/timer_bt_start"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="64dp"
+            android:textSize="25sp"
+            android:text="@string/start"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+
+        <Button
+            android:id="@+id/timer_bt_reset"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="64dp"
+            android:textSize="25sp"
+            android:text="@string/reset"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/timer_ib_hourglass"
+            android:layout_width="256dp"
+            android:layout_height="256dp"
+            android:src="@drawable/ic_hourglass_empty_black_24dp"
+            android:background="#00000000"
+            android:scaleType="fitXY"/>
+
+
+    </RelativeLayout>
 </LinearLayout>

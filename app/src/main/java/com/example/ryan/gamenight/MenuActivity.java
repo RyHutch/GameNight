@@ -3,14 +3,14 @@
 //                          //
 // ListView: Complete       //
 // ViewPager: Complete      //
-// Animation:               //
+// Animation: Complete      //
 // Gesture: -- Complete --  //
 // Custom Dialog: Complete  //
 // Interface: Complete      //
 // Broadcast:               //
 // Service:                 //
 // RadioGroup: Complete     //
-// Handler:                 //
+// Handler: Complete        //
 // Bundle:                  //
 //////////////////////////////
 

@@ -204,6 +204,11 @@ public class DiceActivity extends AppCompatActivity {
                         s += mostCommon.get(j) + ", ";
                     }
                 }
+
+                // Change the text size depending on the number of characters
+                diceTv.setTextSize(128/(int)Math.ceil(0.5 * Math.sqrt(s.length())));
+
+                // Put the values into the TextView
                 diceTv.setText(String.format("%s", s));
                 break;
 

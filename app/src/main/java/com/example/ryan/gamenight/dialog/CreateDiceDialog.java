@@ -18,8 +18,8 @@ public class CreateDiceDialog extends Dialog {
     private NumberPicker faces;
 
     public interface DiceCustomDialogEventListener {
-        public void onClickCancel();
-        public void onClickCreate(int numberOfDice, int numberOfFaces);
+        void onClickCancel();
+        void onClickCreate(int numberOfDice, int numberOfFaces);
     }
 
     public CreateDiceDialog(@NonNull Context context, DiceCustomDialogEventListener listener) {
