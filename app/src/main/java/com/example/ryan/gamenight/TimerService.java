@@ -104,7 +104,7 @@ public class TimerService extends Service {
         // Set the content of the notification
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSmallIcon(R.drawable.ic_timer_black_24dp)
                         .setContentTitle("Timer Expired")
                         .setContentText("The timer set in Game Night has expired.")
                         .setAutoCancel(true);
