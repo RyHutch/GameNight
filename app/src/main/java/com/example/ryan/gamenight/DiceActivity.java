@@ -5,11 +5,11 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
-import android.support.v7.app.AppCompatActivity;
 import android.util.SparseIntArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -20,7 +20,7 @@ import com.example.ryan.gamenight.objects.Die;
 
 import java.util.ArrayList;
 
-public class DiceActivity extends AppCompatActivity {
+public class DiceActivity extends BaseActivity {
 
     // This context
     final Context diceActivity = this;
@@ -98,12 +98,15 @@ public class DiceActivity extends AppCompatActivity {
             }
         });
 
-
         // Initialize the TextView with the dice info
         diceTv = (TextView) findViewById(R.id.dice_tv);
 
         // Roll the dice and let the TextView update
         rollDice();
+
+        // Set the Sum radio button to be checked by default
+        RadioButton r = (RadioButton)findViewById(R.id.dice_rb_sum);
+        r.setChecked(true);
     }
 
     private void createListView() {
@@ -120,6 +123,7 @@ public class DiceActivity extends AppCompatActivity {
 
             @Override
             public void onShake(int count) {
+                toastShort("Roll Dice");
                 rollDice();
             }
         });
@@ -143,6 +147,7 @@ public class DiceActivity extends AppCompatActivity {
                 for (Die d : this.dice) {
                     sum += d.getCurrentFaceUp();
                 }
+                diceTv.setTextSize(128);
                 diceTv.setText(String.format("%d", sum));
                 break;
 
@@ -154,6 +159,7 @@ public class DiceActivity extends AppCompatActivity {
                         high = d.getCurrentFaceUp();
                     }
                 }
+                diceTv.setTextSize(128);
                 diceTv.setText(String.format("%d", high));
                 break;
 

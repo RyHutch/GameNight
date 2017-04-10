@@ -18,6 +18,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 
+import com.example.ryan.gamenight.util.UtilLog;
+
 public class TimerActivity extends AppCompatActivity {
 
     private static final String TAG = "TimerActivity";
@@ -53,7 +55,7 @@ public class TimerActivity extends AppCompatActivity {
                 int s = uiData.getInt("seconds");
                 int m = uiData.getInt("minutes");
                 int h = uiData.getInt("hours");
-                Log.d(TAG, String.valueOf(h) + ":" + String.valueOf(m) + ":" + String.valueOf(s));
+                UtilLog.logD(TAG, String.valueOf(h) + ":" + String.valueOf(m) + ":" + String.valueOf(s));
                 updateUi(s, m, h);
             }
         };
@@ -73,7 +75,6 @@ public class TimerActivity extends AppCompatActivity {
         npSeconds.setMaxValue(59);
 
         // Get views for every button
-        // TODO: Finish implementation - alert/notification
         ibHourglass = (ImageButton)findViewById(R.id.timer_ib_hourglass);
         btControl = (Button)findViewById(R.id.timer_bt_start);
         btReset = (Button)findViewById(R.id.timer_bt_reset);

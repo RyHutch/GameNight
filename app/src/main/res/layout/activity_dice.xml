@@ -39,13 +39,13 @@
         android:id="@+id/dice_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="128sp"
+        android:textSize="64sp"
         android:gravity="center"
-        android:text="@string/roll"
         android:layout_below="@+id/dice_rg"
         android:layout_alignParentStart="true"
         android:layout_above="@+id/diceListView"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:text="@string/select_a_mode"/>
 
     <ListView
         android:id="@+id/diceListView"

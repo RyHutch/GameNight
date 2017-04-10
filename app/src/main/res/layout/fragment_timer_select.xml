@@ -12,7 +12,7 @@
             android:id="@+id/timerImage"
             android:layout_width="256dp"
             android:layout_height="256dp"
-            android:src="@drawable/ic_timer_select"
+            android:src="@drawable/ic_hourglass"
             android:background="#00000000"
             android:scaleType="fitXY"
             android:layout_alignParentTop="true"
